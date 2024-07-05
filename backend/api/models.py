@@ -1,9 +1,7 @@
 from django.db import models
 import uuid
 from .managers import user_manager
-from django.core.files.storage import FileSystemStorage
 from django.conf import settings
-from decouple import config as decouple_config
 
 class User(models.Model):
     id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4)
@@ -31,27 +29,27 @@ class ProblemStatement(models.Model):
     approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(User, related_name="problem_statements", on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, related_name="problem_statements", on_delete=models.CASCADE, db_column="created_by")
     start = models.DateTimeField(null=True)
     end = models.DateTimeField(null=True)
 
     class Meta:
         managed = False
-        db_table = 'problem_statements'
+        db_table = 'mushelf_problem_statements'
 
 class Solution(models.Model):
     id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4)
     title = models.CharField(max_length=100)
     description = models.TextField()
     is_winner = models.BooleanField(default=False)
-    problem_statement = models.ForeignKey(ProblemStatement, related_name="solutions", on_delete=models.CASCADE)
+    problem_statement = models.ForeignKey(ProblemStatement, related_name="solutions", on_delete=models.CASCADE, db_column="problem_statement")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, related_name="solutions_submitted", on_delete=models.CASCADE)
 
     class Meta:
         managed = False
-        db_table = 'solution'
+        db_table = 'mushelf_solutions'
 
 
 
@@ -64,4 +62,4 @@ class Contributor(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'contributor'
+        db_table = 'mushelf_contributors'
