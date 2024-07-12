@@ -45,7 +45,7 @@ class Solution(models.Model):
     problem_statement = models.ForeignKey(ProblemStatement, related_name="solutions", on_delete=models.CASCADE, db_column="problem_statement")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(User, related_name="solutions_submitted", on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, related_name="solutions_submitted", on_delete=models.CASCADE, db_column="created_by")
 
     class Meta:
         managed = False
@@ -58,7 +58,7 @@ class Contributor(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
     contact = models.CharField(max_length=200)
-    solution = models.ForeignKey(Solution, related_name="contributors", on_delete=models.CASCADE)
+    solution = models.ForeignKey(Solution, related_name="contributors", on_delete=models.CASCADE, db_column="solution")
 
     class Meta:
         managed = False
