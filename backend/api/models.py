@@ -30,7 +30,7 @@ class ProblemStatement(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, related_name="problem_statements", on_delete=models.CASCADE, db_column="created_by")
-    start = models.DateTimeField(null=True)
+    approved_by = models.ForeignKey(User, related_name="approved_problem_statements", on_delete=models.SET_NULL, null=True)
     end = models.DateTimeField(null=True)
 
     class Meta:
@@ -55,6 +55,7 @@ class Solution(models.Model):
 
 class Contributor(models.Model):
     id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4)
+    muid = models.CharField(max_length=100)
     name = models.CharField(max_length=100)
     email = models.EmailField()
     contact = models.CharField(max_length=200)

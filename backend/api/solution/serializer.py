@@ -1,14 +1,6 @@
 from rest_framework import serializers
-from .models import ProblemStatement, Solution, Contributor
 from django.db import transaction
-
-class Problem_statement_serializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProblemStatement
-        fields = ['id', 'title', 'description', 'reward', 'start', 'end', 'created_at', 'updated_at', 'created_by']
-        read_only_fields = ['id', 'created_by']
-
-    
+from api.models import Contributor, Solution
 
 
 class Contributor_serializer(serializers.ModelSerializer):
@@ -42,10 +34,3 @@ class Solution_serializer(serializers.ModelSerializer):
                 for contributor in contributors_data:
                     Contributor.objects.create(solution=instance, **contributor)
         return instance
-    
-
-class Problem_statement_detail_serializer(serializers.ModelSerializer):
-    solutions = Solution_serializer(many=True, read_only=True)
-    class Meta:
-        model = ProblemStatement
-        fields = ['id', 'title', 'description', 'reward', 'start', 'end', 'created_at', 'updated_at', 'created_by', 'approved', 'solutions',]
