@@ -29,7 +29,7 @@ class ProblemStatement(models.Model):
     approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(User, related_name="problem_statements", on_delete=models.CASCADE, db_column="created_by")
+    created_by = models.ForeignKey(User, related_name="problem_statements_created", on_delete=models.CASCADE, db_column="created_by")
     approved_by = models.ForeignKey(User, related_name="approved_problem_statements", on_delete=models.SET_NULL, null=True)
     end = models.DateTimeField(null=True)
 
@@ -64,3 +64,15 @@ class Contributor(models.Model):
     class Meta:
         managed = False
         db_table = 'mushelf_contributors'
+
+class CompanyProfile(models.Model):
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4)
+    organization = models.CharField() # Relation to organization table
+    email = models.EmailField(unique=True, max_length=200)
+    mobile = models.CharField(unique=True, max_length=15, blank=True, null=True)
+    website = models.URLField(null=True)
+    size = models.IntegerField()
+    bio = models.TextField(max_length=500)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(User, related_name="company_created", on_delete=models.CASCADE, db_column="created_by")
