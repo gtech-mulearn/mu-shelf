@@ -67,7 +67,7 @@ class Contributor(models.Model):
 
 class CompanyProfile(models.Model):
     id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4)
-    organization = models.CharField() # Relation to organization table
+    organization = models.CharField(max_length=36) # Relation to organization table
     email = models.EmailField(unique=True, max_length=200)
     mobile = models.CharField(unique=True, max_length=15, blank=True, null=True)
     website = models.URLField(null=True)
