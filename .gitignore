@@ -52,3 +52,6 @@ media/
 .venv
 env/
 venv/
+
+# Openapi documentation yml file
+backend/schema.yml
