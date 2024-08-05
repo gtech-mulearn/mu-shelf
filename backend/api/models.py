@@ -3,6 +3,7 @@ import uuid
 from .managers import user_manager
 from django.conf import settings
 
+# Copied from mulearnbackend
 class User(models.Model):
     id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4)
     discord_id = models.CharField(unique=True, max_length=36, blank=True, null=True)
@@ -65,6 +66,25 @@ class Contributor(models.Model):
         managed = False
         db_table = 'mushelf_contributors'
 
+
+# Copied from mulearnbackend
+class Organization(models.Model):
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4())
+    title = models.CharField(max_length=100)
+    code = models.CharField(unique=True, max_length=12)
+    org_type = models.CharField(max_length=25)
+    updated_by = models.ForeignKey(User, on_delete=models.SET(settings.SYSTEM_ADMIN_ID), db_column='updated_by',
+                                   related_name='organization_updated_by')
+    updated_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET(settings.SYSTEM_ADMIN_ID), db_column='created_by',
+                                   related_name='organization_created_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        managed = False
+        db_table = 'organization'
+
+
 class CompanyProfile(models.Model):
     id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4)
     organization = models.CharField(max_length=36) # Relation to organization table
@@ -76,3 +96,18 @@ class CompanyProfile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, related_name="company_created", on_delete=models.CASCADE, db_column="created_by")
+
+
+# Copied from mulearnbackend
+class UserOrganizationLink(models.Model):
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_organization_link_user')
+    org = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name='user_organization_link_org')
+    verified = models.BooleanField()
+    created_by = models.ForeignKey(User, on_delete=models.SET(settings.SYSTEM_ADMIN_ID), db_column='created_by',
+                                   related_name='user_organization_link_created_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        managed = False
+        db_table = 'user_organization_link'
