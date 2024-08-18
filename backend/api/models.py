@@ -87,15 +87,19 @@ class Organization(models.Model):
 
 class CompanyProfile(models.Model):
     id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4)
-    organization = models.CharField(max_length=36) # Relation to organization table
+    organization = models.OneToOneField(Organization, on_delete=models.CASCADE, db_column='organization', related_name="company_profile")
     email = models.EmailField(unique=True, max_length=200)
-    mobile = models.CharField(unique=True, max_length=15, blank=True, null=True)
-    website = models.URLField(null=True)
+    mobile = models.CharField(unique=True, max_length=15)
+    website = models.URLField()
     size = models.IntegerField()
     bio = models.TextField(max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, related_name="company_created", on_delete=models.CASCADE, db_column="created_by")
+
+    class Meta:
+        managed = False
+        db_table = 'company_profile'
 
 
 # Copied from mulearnbackend
