@@ -22,6 +22,23 @@ class User(models.Model):
         managed = False
         db_table = 'user'
 
+# Copied from mulearnbackend
+class Organization(models.Model):
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4())
+    title = models.CharField(max_length=100)
+    code = models.CharField(unique=True, max_length=12)
+    org_type = models.CharField(max_length=25)
+    updated_by = models.ForeignKey(User, on_delete=models.SET(settings.SYSTEM_ADMIN_ID), db_column='updated_by',
+                                   related_name='organization_updated_by')
+    updated_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET(settings.SYSTEM_ADMIN_ID), db_column='created_by',
+                                   related_name='organization_created_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        managed = False
+        db_table = 'organization'
+
 class ProblemStatement(models.Model):
     id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4)
     title = models.CharField(max_length=100)
@@ -32,6 +49,7 @@ class ProblemStatement(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, related_name="problem_statements_created", on_delete=models.CASCADE, db_column="created_by")
     approved_by = models.ForeignKey(User, related_name="approved_problem_statements", on_delete=models.SET_NULL, null=True)
+    organization = models.ForeignKey(Organization, related_name="problem_statements", on_delete=models.CASCADE, db_column="organization")
     end = models.DateTimeField(null=True)
 
     class Meta:
@@ -47,6 +65,7 @@ class Solution(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, related_name="solutions_submitted", on_delete=models.CASCADE, db_column="created_by")
+    organization = models.ForeignKey(Organization, related_name="submissions", on_delete=models.CASCADE, db_column="organization")
 
     class Meta:
         managed = False
@@ -66,23 +85,6 @@ class Contributor(models.Model):
         managed = False
         db_table = 'mushelf_contributors'
 
-
-# Copied from mulearnbackend
-class Organization(models.Model):
-    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4())
-    title = models.CharField(max_length=100)
-    code = models.CharField(unique=True, max_length=12)
-    org_type = models.CharField(max_length=25)
-    updated_by = models.ForeignKey(User, on_delete=models.SET(settings.SYSTEM_ADMIN_ID), db_column='updated_by',
-                                   related_name='organization_updated_by')
-    updated_at = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(User, on_delete=models.SET(settings.SYSTEM_ADMIN_ID), db_column='created_by',
-                                   related_name='organization_created_by')
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        managed = False
-        db_table = 'organization'
 
 
 class CompanyProfile(models.Model):
