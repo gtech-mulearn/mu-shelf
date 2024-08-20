@@ -61,6 +61,7 @@ class Solution(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     is_winner = models.BooleanField(default=False)
+    is_sorted = models.BooleanField(default=False)
     problem_statement = models.ForeignKey(ProblemStatement, related_name="solutions", on_delete=models.CASCADE, db_column="problem_statement")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
