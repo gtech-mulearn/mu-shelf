@@ -5,5 +5,9 @@ class CompanyProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CompanyProfile
-        fields = "__all__"
-        read_only_fields = ['id', 'created_at', 'created_by']
+        fields = ['email', 'organization', 'mobile', 'size', 'bio', 'website']
+
+    def create(self, validated_data):
+        user_id = self.context.get("user_id")
+        validated_data['created_by_id'] = user_id
+        return super().create(validated_data)

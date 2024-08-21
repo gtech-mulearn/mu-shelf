@@ -15,9 +15,20 @@ from django.db.models import Q
 from django.db.models.query import QuerySet
 from django.http import HttpResponse
 from django.template.loader import render_to_string
+from api.models import UserOrganizationLink
+from .exception import UnauthorizedAccessException
 
 
 class CommonUtils:
+
+    @staticmethod
+    def get_organization(user_id):
+        user_org_link = UserOrganizationLink.objects.filter(user__id=user_id).first()
+        if user_org_link is None:
+            raise UnauthorizedAccessException("User is not linked to any organization")
+        return user_org_link.org
+
+
     @staticmethod
     def get_paginated_queryset(
         queryset: QuerySet,

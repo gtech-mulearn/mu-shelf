@@ -22,6 +22,23 @@ class User(models.Model):
         managed = False
         db_table = 'user'
 
+# Copied from mulearnbackend
+class Organization(models.Model):
+    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4())
+    title = models.CharField(max_length=100)
+    code = models.CharField(unique=True, max_length=12)
+    org_type = models.CharField(max_length=25)
+    updated_by = models.ForeignKey(User, on_delete=models.SET(settings.SYSTEM_ADMIN_ID), db_column='updated_by',
+                                   related_name='organization_updated_by')
+    updated_at = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET(settings.SYSTEM_ADMIN_ID), db_column='created_by',
+                                   related_name='organization_created_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        managed = False
+        db_table = 'organization'
+
 class ProblemStatement(models.Model):
     id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4)
     title = models.CharField(max_length=100)
@@ -32,6 +49,7 @@ class ProblemStatement(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, related_name="problem_statements_created", on_delete=models.CASCADE, db_column="created_by")
     approved_by = models.ForeignKey(User, related_name="approved_problem_statements", on_delete=models.SET_NULL, null=True)
+    organization = models.ForeignKey(Organization, related_name="problem_statements", on_delete=models.CASCADE, db_column="organization")
     end = models.DateTimeField(null=True)
 
     class Meta:
@@ -43,10 +61,12 @@ class Solution(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     is_winner = models.BooleanField(default=False)
+    is_sorted = models.BooleanField(default=False)
     problem_statement = models.ForeignKey(ProblemStatement, related_name="solutions", on_delete=models.CASCADE, db_column="problem_statement")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, related_name="solutions_submitted", on_delete=models.CASCADE, db_column="created_by")
+    organization = models.ForeignKey(Organization, related_name="submissions", on_delete=models.CASCADE, db_column="organization")
 
     class Meta:
         managed = False
@@ -67,35 +87,22 @@ class Contributor(models.Model):
         db_table = 'mushelf_contributors'
 
 
-# Copied from mulearnbackend
-class Organization(models.Model):
-    id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4())
-    title = models.CharField(max_length=100)
-    code = models.CharField(unique=True, max_length=12)
-    org_type = models.CharField(max_length=25)
-    updated_by = models.ForeignKey(User, on_delete=models.SET(settings.SYSTEM_ADMIN_ID), db_column='updated_by',
-                                   related_name='organization_updated_by')
-    updated_at = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(User, on_delete=models.SET(settings.SYSTEM_ADMIN_ID), db_column='created_by',
-                                   related_name='organization_created_by')
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        managed = False
-        db_table = 'organization'
-
 
 class CompanyProfile(models.Model):
     id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4)
-    organization = models.CharField(max_length=36) # Relation to organization table
+    organization = models.OneToOneField(Organization, on_delete=models.CASCADE, db_column='organization', related_name="company_profile")
     email = models.EmailField(unique=True, max_length=200)
-    mobile = models.CharField(unique=True, max_length=15, blank=True, null=True)
-    website = models.URLField(null=True)
+    mobile = models.CharField(unique=True, max_length=15)
+    website = models.URLField()
     size = models.IntegerField()
     bio = models.TextField(max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, related_name="company_created", on_delete=models.CASCADE, db_column="created_by")
+
+    class Meta:
+        managed = False
+        db_table = 'company_profile'
 
 
 # Copied from mulearnbackend
