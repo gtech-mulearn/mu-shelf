@@ -13,8 +13,8 @@ class Solution_serializer(serializers.ModelSerializer):
     contributors = Contributor_serializer(many=True)
     class Meta:
         model = Solution
-        fields = ['id', 'title', 'description', 'is_winner', 'problem_statement', 'created_at', 'created_by', 'updated_at', 'contributors']
-        read_only_fields = ['is_winner', 'created_by']
+        fields = ['id', 'title', 'description', 'winner_status', 'problem_statement', 'created_at', 'created_by', 'updated_at', 'contributors']
+        read_only_fields = ['winner_status','created_by']
     
     def create(self, validated_data):
         contributers_data = validated_data.pop("contributors")

@@ -2,6 +2,7 @@ from django.db import models
 import uuid
 from .managers import user_manager
 from django.conf import settings
+from utils.types import WinnerType
 
 # Copied from mulearnbackend
 class User(models.Model):
@@ -57,10 +58,17 @@ class ProblemStatement(models.Model):
         db_table = 'mushelf_problem_statements'
 
 class Solution(models.Model):
+    
+    WINNER_STATUS_CHOICES = [(tag.name, tag.value) for tag in WinnerType]
+    
     id = models.CharField(primary_key=True, max_length=36, default=uuid.uuid4)
     title = models.CharField(max_length=100)
     description = models.TextField()
-    is_winner = models.BooleanField(default=False)
+    winner_status = models.CharField(
+        max_length=15,
+        choices=WINNER_STATUS_CHOICES,
+        default=WinnerType.NOT_WINNER.name,
+    )
     is_sorted = models.BooleanField(default=False)
     problem_statement = models.ForeignKey(ProblemStatement, related_name="solutions", on_delete=models.CASCADE, db_column="problem_statement")
     created_at = models.DateTimeField(auto_now_add=True)
