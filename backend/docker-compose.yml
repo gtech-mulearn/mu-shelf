@@ -1,0 +1,17 @@
+version: '3'
+services:
+  mushelfbackend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mushelfbackend
+    image: mushelfbackend
+    restart: always
+    ports:
+      - "8006:8000"
+    volumes:
+      - /var/log/mushelfbackend:/var/log/mushelfbackend
+      - /var/www/mushelfbackend/assets:/app/assets
+      - /var/www/mushelfbackend/media:/app/media
+    env_file:
+      - .env
