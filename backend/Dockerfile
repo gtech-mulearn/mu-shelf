@@ -3,7 +3,9 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 RUN mkdir /var/log/mushelfbackend
-RUN apt-get update -y  && apt-get install -y default-libmysqlclient-dev python-dev && apt install build-essential -y
+RUN apt-get update -y && \
+    apt-get install -y default-libmysqlclient-dev python-dev build-essential pkg-config && \
+    apt-get install -y libmariadb-dev-compat libmariadb-dev
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
 COPY . .
