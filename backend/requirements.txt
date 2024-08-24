@@ -9,3 +9,6 @@ PyMySQL==1.1.1
 python-decouple==3.8
 requests==2.31.0
 gunicorn
+openpyxl
+pytz
+requests
