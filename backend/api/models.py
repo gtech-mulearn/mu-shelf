@@ -48,7 +48,7 @@ class ProblemStatement(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, related_name="problem_statements_created", on_delete=models.CASCADE, db_column="created_by")
-    approved_by = models.ForeignKey(User, related_name="approved_problem_statements", on_delete=models.SET_NULL, null=True)
+    approved_by = models.ForeignKey(User, related_name="approved_problem_statements", on_delete=models.SET_NULL, null=True,db_column="approved_by")
     organization = models.ForeignKey(Organization, related_name="problem_statements", on_delete=models.CASCADE, db_column="organization")
     end = models.DateTimeField(null=True)
 
